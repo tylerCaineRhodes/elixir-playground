@@ -1,17 +1,7 @@
 require Logger
 
-defmodule Servy.Handler do
-  def handle(request) do
-    request
-    |> parse
-    |> rewrite_path
-    |> log
-    |> route
-    |> track
-    |> emojify
-    |> format_response
-  end
-
+defmodule Servy.Plugins do
+  @doc "Logs 404 requests"
   def track(%{status: 404, path: path} = conv) do
     Logger.warning("Warning: #{path} not found")
     conv
@@ -42,6 +32,24 @@ defmodule Servy.Handler do
   def rewrite_path_captures(conv, nil), do: conv
 
   def log(conv), do: IO.inspect(conv)
+end
+
+defmodule Servy.Handler do
+  @moduledoc "Handles HTTP requests."
+
+  @pages_path Path.expand("../../pages", __DIR__)
+
+  @doc "Transforms the request into a response."
+  def handle(request) do
+    request
+    |> parse
+    |> Servy.Plugins.rewrite_path()
+    |> Servy.Plugins.log()
+    |> route
+    |> Servy.Plugins.track()
+    |> emojify
+    |> format_response
+  end
 
   def parse(request) do
     [method, path, _] =
@@ -62,7 +70,7 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/bears/new"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join("form.html")
     |> File.read()
     |> handle_file(conv)
@@ -77,14 +85,14 @@ defmodule Servy.Handler do
   end
 
   def route(%{method: "GET", path: "/about"} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join("about.html")
     |> File.read()
     |> handle_file(conv)
   end
 
   def route(%{method: method, path: "/pages/" <> page_name} = conv) do
-    Path.expand("../../pages", __DIR__)
+    @pages_path
     |> Path.join(page_name <> ".html")
     |> File.read()
     |> handle_file(conv)
