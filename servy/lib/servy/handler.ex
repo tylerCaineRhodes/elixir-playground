@@ -41,7 +41,7 @@ defmodule Servy.Handler do
     handle_file(%{file_name: "about.html", conv: conv})
   end
 
-  def route(%{method: method, path: "/pages/" <> page_name} = conv) do
+  def route(%{method: _method, path: "/pages/" <> page_name} = conv) do
     handle_file(%{file_name: page_name <> ".html", conv: conv})
   end
 
