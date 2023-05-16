@@ -1,6 +1,8 @@
 require Logger
 
 defmodule Servy.Parser do
+  alias Servy.Conv, as: Conv
+
   def parse(request) do
     [method, path, _] =
       request
@@ -8,7 +10,7 @@ defmodule Servy.Parser do
       |> List.first()
       |> String.split(" ")
 
-    %Servy.Conv{
+    %Conv{
       method: method,
       path: path
     }
