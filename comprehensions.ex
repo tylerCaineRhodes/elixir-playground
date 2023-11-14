@@ -26,3 +26,27 @@ style = %{"width" => 10, "height" => 20, "border" => "2px"}
 
 new_style = Map.new(style, fn {key, val} -> {String.to_atom(key), val} end)
 new_style = for {key, val} <- style, into: %{}, do: {String.to_atom(key), val}
+
+print_line.()
+
+ranks =
+  [ "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" ]
+
+suits =
+  [ "♣", "♦", "♥", "♠" ]
+
+deck = for rank <- ranks, suit <- suits do
+ {rank, suit}
+end
+
+deck
+|> length
+|> IO.inspect
+
+hand = deck
+|> Enum.take_random(13)
+|> IO.inspect
+
+hand = Enum.shuffle
+|> Enum.take(13)
+|> IO.inspect
