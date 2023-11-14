@@ -1,10 +1,13 @@
 defmodule Servy.Conv do
+  @doc "Name of the struct is the name of the module. You cannot have more than one struct per module."
   defstruct method: "",
             path: "",
             params: %{},
             headers: %{},
             resp_body: "",
             status: nil
+
+  # defstruct []
 
   def full_status(conv) do
     "#{conv.status} #{status_reason(conv.status)}"

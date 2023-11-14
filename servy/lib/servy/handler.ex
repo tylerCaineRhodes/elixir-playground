@@ -1,6 +1,11 @@
+require Logger
+
 defmodule Servy.Handler do
   @moduledoc "Handles HTTP requests."
 
+  Logger.info("Initializing Servy.handler")
+
+  # defaults to alias Servy.Conv, as: Conv
   alias Servy.Conv
   alias Servy.BearController
 
