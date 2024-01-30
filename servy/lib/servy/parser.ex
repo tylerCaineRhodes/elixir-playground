@@ -29,9 +29,6 @@ defmodule Servy.Parser do
     %{"name" => "Baloo", "type" => "Brown"}
     iex> Servy.Parser.parse_params("multipart/form-data", params_string)
     %{}
-    params_string = "<html><p1> hello </p1> </html>"
-    iex> Servy.Parse.parse_params("text/html", params_string)
-    "<html><p1>hello</p1></html>"
   """
 
   def parse_params("application/x-www-form-urlencoded", params_string) do
