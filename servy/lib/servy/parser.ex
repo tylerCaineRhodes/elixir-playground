@@ -19,6 +19,21 @@ defmodule Servy.Parser do
     }
   end
 
+  @doc """
+  Parses the given param string of the form `key1=value1&key2=value2` into a mpa
+  with corresponding keys and values
+
+  ## Examples
+    iex> params_string = "name=Baloo&type=Brown"
+    iex> Servy.Parser.parse_params("application/x-www-form-urlencoded", params_string)
+    %{"name" => "Baloo", "type" => "Brown"}
+    iex> Servy.Parser.parse_params("multipart/form-data", params_string)
+    %{}
+    params_string = "<html><p1> hello </p1> </html>"
+    iex> Servy.Parse.parse_params("text/html", params_string)
+    "<html><p1>hello</p1></html>"
+  """
+
   def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string |> String.trim() |> URI.decode_query()
   end
