@@ -8,6 +8,7 @@ defmodule Servy.Handler do
   # defaults to alias Servy.Conv, as: Conv
   alias Servy.Conv
   alias Servy.BearController
+  alias Servy.Api.BearController, as: ApiBearController
 
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Servy.Parser, only: [parse: 1]
@@ -27,6 +28,10 @@ defmodule Servy.Handler do
 
   def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
     %{conv | status: 200, resp_body: "Bears, Lions, Tigers"}
+  end
+
+  def route(%Conv{method: "GET", path: "/api/bears"} = conv) do
+    ApiBearController.index(conv)
   end
 
   def route(%Conv{method: "GET", path: "/bears"} = conv) do
@@ -66,7 +71,7 @@ defmodule Servy.Handler do
   def format_response(%Conv{} = conv) do
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: text/html\r
+    Content-Type: #{conv.resp_content_type}\r
     Content-Length: #{byte_size(conv.resp_body)}\r
     \r
     #{conv.resp_body}
