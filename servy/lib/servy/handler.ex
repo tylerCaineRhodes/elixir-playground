@@ -72,11 +72,19 @@ defmodule Servy.Handler do
   def format_response(%Conv{} = conv) do
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
-    Content-Type: #{conv.resp_headers["Content-Type"]}\r
-    Content-Length: #{conv.resp_headers["Content-Length"]}\r
+    #{format_response_headers(conv)}
     \r
     #{conv.resp_body}
     """
+  end
+
+  defp format_response_headers(conv) do
+    Enum.map(conv.resp_headers, fn {k, v} ->
+      "#{k}: #{v}\r"
+    end)
+    |> Enum.sort()
+    |> Enum.reverse()
+    |> Enum.join("\n")
   end
 
   def put_content_length(%Conv{} = conv) do
