@@ -29,6 +29,9 @@ defmodule Servy.Parser do
     %{"name" => "Baloo", "type" => "Brown"}
     iex> Servy.Parser.parse_params("multipart/form-data", params_string)
     %{}
+    iex> params_string = ~s({"name": "Breezly", "type": "Polar"})
+    iex> Servy.Parser.parse_params("application/json", params_string)
+    %{"name" => "Breezly", "type" => "Polar"}
   """
 
   def parse_params("application/x-www-form-urlencoded", params_string) do
@@ -37,6 +40,10 @@ defmodule Servy.Parser do
 
   def parse_params("text/html", params_string) do
     params_string |> String.trim()
+  end
+
+  def parse_params("application/json", params_string) do
+    params_string |> Poison.Parser.parse!()
   end
 
   def parse_params(_, _), do: %{}
