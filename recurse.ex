@@ -16,9 +16,9 @@ defmodule Recurse do
 
   defp triple([], current_list) do
     current_list |>
-     Enum.reverse |>
-      inspect|>
-       IO.puts
+    Enum.reverse |>
+    inspect|>
+    IO.puts
   end
 
   def sum([head | tail], acc) do

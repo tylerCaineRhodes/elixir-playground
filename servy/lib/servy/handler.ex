@@ -8,6 +8,7 @@ defmodule Servy.Handler do
   # defaults to alias Servy.Conv, as: Conv
   alias Servy.Conv
   alias Servy.BearController
+  alias Servy.VideoCam
   alias Servy.Api.BearController, as: ApiBearController
 
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
@@ -25,6 +26,19 @@ defmodule Servy.Handler do
     |> put_content_length
     |> emojify
     |> format_response
+  end
+
+  def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
+    task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+
+    snapshots =
+      ["cam-1", "cam-2", "cam-3"]
+        |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+        |> Enum.map(&Task.await/1)
+
+    where_is_bigfoot = Task.await(task)
+
+    %{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot} }
   end
 
   def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
