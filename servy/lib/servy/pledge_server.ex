@@ -1,9 +1,39 @@
 defmodule Servy.PledgeServer do
+  @name :pledge_server
+
+  # Client Interface
   def start do
-    IO.puts "Starting the pledge server..."
+    IO.puts("Starting the pledge server...")
     pid = spawn(__MODULE__, :listen_loop, [[]])
+    Process.register(pid, @name)
+    pid
   end
 
+  def create_pledge(name, amount) do
+    send(@name, {self(), :create_pledge, name, amount})
+
+    receive do
+      {:response, status} -> status
+    end
+  end
+
+  def recent_pledges do
+    send(@name, {self(), :recent_pledges})
+
+    receive do
+      {:response, pledges} -> IO.inspect(pledges)
+    end
+  end
+
+  def total_pledged do
+    send(@name, {self(), :total_pledged})
+
+    receive do
+      {:response, total} -> total
+    end
+  end
+
+  # Server
   def listen_loop(state) do
     receive do
       {sender, :create_pledge, name, amount} ->
@@ -16,22 +46,15 @@ defmodule Servy.PledgeServer do
       {sender, :recent_pledges} ->
         send(sender, {:response, state})
         listen_loop(state)
-    end
-  end
 
-  def create_pledge(pid, name, amount) do
-    send(pid, {self(), :create_pledge, name, amount})
+      {sender, :total_pledged} ->
+        total = Enum.map(state, &elem(&1, 1)) |> Enum.sum()
+        send(sender, {:response, total})
+        listen_loop(state)
 
-    receive do
-      {:response, status} -> status
-    end
-  end
-
-  def recent_pledges(pid) do
-    send(pid, {self(), :recent_pledges})
-
-    receive do
-      {:response, pledges} -> IO.inspect(pledges)
+      unexpected_message ->
+        IO.puts("Unexpected message: #{inspect(unexpected_message)}")
+        listen_loop(state)
     end
   end
 
@@ -42,12 +65,13 @@ end
 
 alias Servy.PledgeServer
 
-pid = PledgeSever.start()
+PledgeServer.start()
 
-IO.inspect(PledgeServer.create_pledge(pid, "larry", 10))
-IO.inspect(PledgeServer.create_pledge(pid, "moe", 20))
-IO.inspect(PledgeServer.create_pledge(pid, "curly", 30))
-IO.inspect(PledgeServer.create_pledge(pid, "daisy", 40))
-IO.inspect(PledgeServer.create_pledge(pid, "grace", 50))
+IO.inspect(PledgeServer.create_pledge("larry", 10))
+IO.inspect(PledgeServer.create_pledge("moe", 20))
+IO.inspect(PledgeServer.create_pledge("curly", 30))
+IO.inspect(PledgeServer.create_pledge("daisy", 40))
+IO.inspect(PledgeServer.create_pledge("grace", 50))
 
-IO.inspect(PledgeServer.recent_pledges(pid))
+IO.inspect(PledgeServer.recent_pledges())
+IO.inspect(PledgeServer.total_pledged())
