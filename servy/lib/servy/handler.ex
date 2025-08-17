@@ -78,6 +78,11 @@ defmodule Servy.Handler do
     handle_file(%{file_name: "about.html", conv: conv})
   end
 
+  def route(%Conv{method: "GET", path: "/404s"} = conv) do
+    counts = Servy.FourOhFourCounter.get_counts()
+    %{conv | status: 200, resp_body: inspect(counts)}
+  end
+
   def route(%Conv{method: _method, path: "/pages/" <> page_name} = conv) do
     handle_file(%{file_name: page_name <> ".html", conv: conv})
   end
