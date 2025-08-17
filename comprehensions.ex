@@ -2,7 +2,6 @@ print_line = fn() -> "*" |> String.duplicate(50) |> IO.puts end
 
 cat_lover? = fn(pet_choice) ->  pet_choice == :cat end
 dog_lover? = fn(pet_choice) -> pet_choice == :dog end
-
 prefs = [{'betty', :dog}, {'bob', :dog}, {'becky', :cat}]
 
 for pref <- prefs, do:  pref

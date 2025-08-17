@@ -1,0 +1,9 @@
+<h1>Snapshots</h1>
+
+<ul>
+  <%= for snapshot <- snapshots do %>
+      <li><%= shapshot %></li>
+  <% end %>
+</ul>
+
+<p>Bigfoot's location is <strong><%= inspect where_is_bigfoot %></strong></p>
