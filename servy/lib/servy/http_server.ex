@@ -55,17 +55,13 @@ defmodule Servy.HttpServer do
   Receives a request on the `client_socket`.
   """
   def read_request(client_socket) do
-    case :gen_tcp.recv(client_socket, 0) do
-      {:ok, request} ->
-        IO.puts("➡️  Received request:\n")
-        IO.puts(request)
-        request
+    # all available bytes
+    {:ok, request} = :gen_tcp.recv(client_socket, 0)
 
-      {:error, reason} ->
-        IO.puts("❌  Error receiving request: #{inspect(reason)}")
-        :gen_tcp.close(client_socket)
-        exit(:shutdown)
-    end
+    IO.puts("➡️  Received request:\n")
+    IO.puts(request)
+
+    request
   end
 
   @doc """

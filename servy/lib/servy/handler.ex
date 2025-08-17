@@ -28,6 +28,10 @@ defmodule Servy.Handler do
     |> format_response
   end
 
+  def route(%Conv{method: "GET", path: "/pledges/new"} = conv) do
+    Servy.PledgeController.new(conv)
+  end
+
   def route(%Conv{method: "GET", path: "/pledges"} = conv) do
     Servy.PledgeController.index(conv)
   end
@@ -114,18 +118,19 @@ defmodule Servy.Handler do
     %{conv | resp_headers: headers}
   end
 
-  def emojify(%{status: 200} = conv) do
-    if Mix.env() !== :test do
-      emojies = String.duplicate("🎉", 5)
-      body = emojies <> "\n" <> conv.resp_body <> "\n" <> emojies
-      %{conv | resp_body: body}
-    else
-      conv
-    end
-  end
+  # def emojify(%{status: 200} = conv) do
+  #   if Mix.env() !== :test and !String.contains?(conv.resp_body, "<html>") do
+  #     emojies = String.duplicate("🎉", 5)
+  #     body = emojies <> "\n" <> conv.resp_body <> "\n" <> emojies
+  #     %{conv | resp_body: body}
+  #   else
+  #     conv
+  #   end
+  # end
 
   def emojify(conv), do: conv
 end
+
 
 # request = """
 # GET /wildlife HTTP/1.1

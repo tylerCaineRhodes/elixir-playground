@@ -2,8 +2,8 @@
 
 <ul>
   <%= for snapshot <- snapshots do %>
-      <li><%= shapshot %></li>
+      <li><%= snapshot %></li>
   <% end %>
 </ul>
 
-<p>Bigfoot's location is <strong><%= inspect where_is_bigfoot %></strong></p>
+<p>Bigfoot's location is <strong>lng:<%= where_is_bigfoot.lng %> and lat: <%= where_is_bigfoot.lat %></strong></p>
